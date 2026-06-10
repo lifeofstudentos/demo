@@ -321,7 +321,8 @@ pub async fn run_viewer_loop(
 
     let conn: Connection = endpoint.connect(host_addr, b"syntro-rdp").await?;
 
-    let (send_stream, mut recv_stream): (SendStream, RecvStream) = conn.open_bi().await?;
+    let (mut send_stream, mut recv_stream): (SendStream, RecvStream) = conn.open_bi().await?;
+    send_stream.write_all(&0u32.to_be_bytes()).await?;
     let _ = send_stream_tx.send(send_stream);
 
     let mut decoder = H264Decoder::new()?;
