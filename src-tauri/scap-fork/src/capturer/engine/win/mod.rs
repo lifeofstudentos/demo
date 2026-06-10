@@ -16,13 +16,12 @@ use std::{
     sync::mpsc::{self, Receiver, RecvTimeoutError, Sender},
 };
 use windows_capture::{
-    capture::{CaptureControl, Context, GraphicsCaptureApiHandler},
+    capture::{CaptureControl, GraphicsCaptureApiHandler},
     frame::Frame as WCFrame,
     graphics_capture_api::{GraphicsCaptureApi, InternalCaptureControl},
     monitor::Monitor as WCMonitor,
     settings::{
-        ColorFormat, CursorCaptureSettings, DirtyRegionSettings, DrawBorderSettings,
-        MinimumUpdateIntervalSettings, SecondaryWindowSettings, Settings as WCSettings,
+        ColorFormat, CursorCaptureSettings, DrawBorderSettings, Settings as WCSettings,
     },
     window::Window as WCWindow,
 };
@@ -51,10 +50,10 @@ impl GraphicsCaptureApiHandler for Capturer {
     type Flags = FlagStruct;
     type Error = Box<dyn std::error::Error + Send + Sync>;
 
-    fn new(context: Context<Self::Flags>) -> Result<Self, Self::Error> {
+    fn new(flags: Self::Flags) -> Result<Self, Self::Error> {
         Ok(Self {
-            tx: context.flags.tx,
-            crop: context.flags.crop,
+            tx: flags.tx,
+            crop: flags.crop,
             start_time: (
                 unsafe {
                     let mut time = 0;
@@ -99,7 +98,7 @@ impl GraphicsCaptureApiHandler for Capturer {
                     .expect("Failed to crop buffer");
 
                 // get raw frame buffer
-                let raw_frame_buffer = match cropped_buffer.as_nopadding_buffer() {
+                let raw_frame_buffer = match cropped_buffer.as_raw_nopadding_buffer() {
                     Ok(buffer) => buffer,
                     Err(_) => return Err(("Failed to get raw buffer").into()),
                 };
@@ -212,12 +211,9 @@ pub fn create_capturer(
 
     let settings = match target {
         Target::Display(display) => Settings::Display(WCSettings::new(
-            WCMonitor::from_raw_hmonitor(display.raw_handle.0),
+            WCMonitor::from_raw_hmonitor(display.raw_handle.0 as isize),
             show_cursor,
             draw_border,
-            SecondaryWindowSettings::Default,
-            MinimumUpdateIntervalSettings::Default,
-            DirtyRegionSettings::Default,
             color_format,
             FlagStruct {
                 tx: tx.clone(),
@@ -225,12 +221,9 @@ pub fn create_capturer(
             },
         )),
         Target::Window(window) => Settings::Window(WCSettings::new(
-            WCWindow::from_raw_hwnd(window.raw_handle.0),
+            WCWindow::from_raw_hwnd(window.raw_handle.0 as isize),
             show_cursor,
             draw_border,
-            SecondaryWindowSettings::Default,
-            MinimumUpdateIntervalSettings::Default,
-            DirtyRegionSettings::Default,
             color_format,
             FlagStruct {
                 tx: tx.clone(),

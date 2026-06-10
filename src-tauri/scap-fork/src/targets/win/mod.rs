@@ -18,7 +18,7 @@ pub fn get_all_targets() -> Vec<Target> {
         let target = Target::Display(super::Display {
             id,
             title,
-            raw_handle: HMONITOR(display.as_raw_hmonitor()),
+            raw_handle: HMONITOR(display.as_raw_hmonitor() as *mut _),
         });
         targets.push(target);
     }
@@ -32,7 +32,7 @@ pub fn get_all_targets() -> Vec<Target> {
         let target = Target::Window(super::Window {
             id,
             title,
-            raw_handle: HWND(window.as_raw_hwnd()),
+            raw_handle: HWND(window.as_raw_hwnd() as *mut _),
         });
         targets.push(target);
     }
@@ -47,7 +47,7 @@ pub fn get_main_display() -> Display {
     Display {
         id,
         title: display.device_name().expect("Failed to get monitor name"),
-        raw_handle: HMONITOR(display.as_raw_hmonitor()),
+        raw_handle: HMONITOR(display.as_raw_hmonitor() as *mut _),
     }
 }
 
@@ -94,7 +94,7 @@ pub fn get_target_dimensions(target: &Target) -> (u64, u64) {
             (width as u64, height as u64)
         },
         Target::Display(display) => {
-            let monitor = Monitor::from_raw_hmonitor(display.raw_handle.0);
+            let monitor = Monitor::from_raw_hmonitor(display.raw_handle.0 as isize);
 
             (
                 monitor.width().unwrap() as u64,
