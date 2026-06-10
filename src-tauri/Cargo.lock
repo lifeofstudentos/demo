@@ -5676,8 +5676,6 @@ dependencies = [
 [[package]]
 name = "scap"
 version = "0.1.0-beta.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "36b5187a2336cbb98d29647050d336ce16bf4806da8fcf04934a4c8788bc17bc"
 dependencies = [
  "cidre",
  "cocoa",
@@ -8054,15 +8052,14 @@ dependencies = [
 
 [[package]]
 name = "windows-capture"
-version = "1.5.0"
+version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3a4df73e95feddb9ec1a7e9c2ca6323b8c97d5eeeff78d28f1eccdf19c882b24"
+checksum = "15e2f94b43842205eb84814f505badade792e7b8cd132e436636ccbf7baa08fc"
 dependencies = [
  "parking_lot",
  "rayon",
- "thiserror 2.0.18",
- "windows 0.61.3",
- "windows-future",
+ "thiserror 1.0.69",
+ "windows 0.56.0",
 ]
 
 [[package]]
