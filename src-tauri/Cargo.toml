@@ -26,7 +26,7 @@ tauri-plugin-log = "2"
 tauri-plugin-shell = "2"
 tokio = { version = "1.40", features = ["full"] }
 anyhow = "1.0"
-scap = "0.1.0-beta.1"
+scap = { path = "./scap-fork" }
 openh264 = "0.6"
 enigo = "0.2"
 socket2 = { version = "0.5.10", features = ["all"] }
